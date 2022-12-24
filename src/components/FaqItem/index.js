@@ -1,35 +1,65 @@
+import {Component} from 'react'
+
 import './index.css'
 
-const FaqItem = props => {
-  const {listItem, state, clickBtn, activeId} = props
-  const {id, questionText, answerText} = listItem
-  let isTrue = false
-  if (activeId === id) {
-    const {isActive} = state
-    isTrue = isActive
+const PLUS_IMAGE =
+  'https://assets.ccbp.in/frontend/react-js/faqs-plus-icon-img.png'
+const MINUS_IMAGE =
+  'https://assets.ccbp.in/frontend/react-js/faqs-minus-icon-img.png'
+
+class FaqItem extends Component {
+  state = {
+    isActive: false,
   }
-  const imgUrl = isTrue
-    ? 'https://assets.ccbp.in/frontend/react-js/faqs-minus-icon-img.png'
-    : 'https://assets.ccbp.in/frontend/react-js/faqs-plus-icon-img.png'
-  const altText = isTrue ? 'minus' : 'plus'
-  const btnClick = () => {
-    clickBtn(id)
-  }
-  return (
-    <li className="faq-item" key={id}>
-      <div className="first-div">
-        <h1 className="question">{questionText}</h1>
-        <button type="button" className="btn" onClick={btnClick}>
-          <img src={imgUrl} className="image" alt={altText} />
-        </button>
-      </div>
-      {isTrue && (
-        <>
-          <hr />
+
+  renderAnswer = () => {
+    const {faqDetails} = this.props
+    const {answerText} = faqDetails
+    const {isActive} = this.state
+
+    if (isActive) {
+      return (
+        <div>
+          <hr className="horizontal-line" />
           <p className="answer">{answerText}</p>
-        </>
-      )}
-    </li>
-  )
+        </div>
+      )
+    }
+    return null
+  }
+
+  onToggleIsActive = () => {
+    this.setState(prevState => ({
+      isActive: !prevState.isActive,
+    }))
+  }
+
+  renderActiveImage = () => {
+    const {isActive} = this.state
+    const image = isActive ? MINUS_IMAGE : PLUS_IMAGE
+    const altText = isActive ? 'minus' : 'plus'
+
+    return (
+      <button className="button" type="button" onClick={this.onToggleIsActive}>
+        <img className="image" src={image} alt={altText} />
+      </button>
+    )
+  }
+
+  render() {
+    const {faqDetails} = this.props
+    const {questionText} = faqDetails
+
+    return (
+      <li className="faq-item">
+        <div className="question-container">
+          <h1 className="question">{questionText}</h1>
+          {this.renderActiveImage()}
+        </div>
+        {this.renderAnswer()}
+      </li>
+    )
+  }
 }
+
 export default FaqItem
